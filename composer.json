@@ -1,0 +1,5 @@
+{
+    "require": {
+        "minicodemonkey/amazon-alexa-php": "^0.1.5"
+    }
+}
