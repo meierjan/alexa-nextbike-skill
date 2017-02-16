@@ -66,7 +66,7 @@ class MapDataStore
             $xmlAsArray = $this->converterFactory->createConverter($stringResponse)->data;
 
             return array_map(function ($bikeAsXmlArray) {
-                return BikeEntity::createFromArray($bikeAsXmlArray);
+                return BikeEntity::createFromParsedXmlArray($bikeAsXmlArray);
             }, $xmlAsArray[NextBikeApi::XML_ROOT_TAG]);
 
         } catch (\Exception $exception) {

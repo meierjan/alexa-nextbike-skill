@@ -17,17 +17,50 @@ class BikeEntity
     /**
      * BikeEntity constructor.
      * @param $name
-     * @param $isActive
-     * @param $bikeType
+     * @param boolean $isActive
+     * @param int $bikeType
      * @param $state
      */
     private function __construct($name, $isActive, $bikeType, $state)
     {
         $this->name = $name;
-        $this->isActive = $isActive;
+        $this->isActive = (boolean)$isActive;
+        $this->type = (int)$bikeType;
         $this->state = $state;
-        $this->type = $bikeType;
     }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
 
     function __toString()
     {
@@ -35,8 +68,8 @@ class BikeEntity
     }
 
 
-    public static function createFromArray($xmlArray)
+    public static function createFromParsedXmlArray($xmlArray)
     {
-        return new BikeEntity($xmlArray["@number"], (boolean)$xmlArray["@active"], (int)$xmlArray["@bike_type"], $xmlArray["@state"]);
+        return new BikeEntity($xmlArray["@number"], $xmlArray["@active"], (int)$xmlArray["@bike_type"], $xmlArray["@state"]);
     }
 }
