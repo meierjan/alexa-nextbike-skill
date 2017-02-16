@@ -33,20 +33,31 @@ $nextBikeRepository = new NextBikeRepository($mapDataStore);
 $app = new App;
 
 $app->any('/', function (Request $request, Response $response) {
+    global $nextBikeRepository;
 
     $jsonDataAsArray = json_decode($request->getBody(), true);
     $alexaRequest = \Alexa\Request\Request::fromData($jsonDataAsArray);
 
     if ($alexaRequest instanceof IntentRequest) {
-        $alexaResponse = new \Alexa\Response\Response;
+        if ($alexaRequest->intentName == "FindBikes") {
+            $alexaResponse = new \Alexa\Response\Response;
 
-        $alexaResponse
-            ->respond('Cooool. I\'ll lower the temperature a bit for you!')
-            ->withCard('Temperature decreased by 2 degrees');
+            $stationSlot = $alexaRequest->slots;
+            $stationNumber = $stationSlot["station"];
 
-        return $response
-            ->withHeader('Content-type', 'application/json')
-            ->write(json_encode($alexaResponse->render()));
+            $bikes = $nextBikeRepository->getBikesForStation($stationNumber);
+            $bikeCount = count($bikes);
+
+            /** @noinspection PhpUndefinedMethodInspection */
+            $alexaResponse
+                ->respond(L::answer_find_bikes($bikeCount, $stationNumber));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->write(json_encode($alexaResponse->render()));
+        } else {
+            throw new Exception();
+        }
     } else {
         throw new Exception();
     }
