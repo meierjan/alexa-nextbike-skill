@@ -1,10 +1,32 @@
 <?php
-	include('vendor/autoload.php');
+use Dotenv\Dotenv;
+use wtf\meier\data\MapDataStore;
+use wtf\meier\data\NextBikeRepository;
+use wtf\meier\data\XmlConverterFactory;
+use wtf\meier\settings\ApiSettings;
 
-	$response = new \Alexa\Response\Response;
-	$response->respond('Cooool. I\'ll lower the temperature a bit for you!')
-    		->withCard('Temperature decreased by 2 degrees');
+include('vendor/autoload.php');
 
-	header('Content-Type: application/json');
-	echo json_encode($response->render());
-	exit;
+// setting up environment stuff
+$env = new Dotenv(__DIR__);
+$apiSettings = ApiSettings::createFromDotEnv($env);
+
+// load translations
+$translations = new i18n();
+$translations->init();
+
+
+$httpClient = new GuzzleHttp\Client([
+    'base_uri' => $apiSettings->getBaseUrl()
+]);
+
+
+$xmlConverterFactory = new XmlConverterFactory();
+$mapDataStore = new MapDataStore($apiSettings, $httpClient, $xmlConverterFactory);
+$nextBikeRepository = new NextBikeRepository($mapDataStore);
+
+$bikesAtStation = $nextBikeRepository->getBikesForStation(4050);
+
+foreach ($bikesAtStation as $bike) {
+    echo $bike . "\n";
+};
