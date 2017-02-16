@@ -27,7 +27,7 @@ class ApiSettings
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getBaseUrl()
     {
@@ -35,11 +35,10 @@ class ApiSettings
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getApiKey()
     {
-
         return $this->apiKey;
     }
 
